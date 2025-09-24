@@ -57,13 +57,14 @@ def get_watched_avg_rating(user_data):
     return avg_rating
 #2
 def get_most_watched_genre(user_data):
-    watched = user_data.get(WATCHED, [])
+    watched = user_data.get(WATCHED)
     if watched is None:
         return 0.0
-    count_genre ={}
+    count_genre = {}
     for movie in watched:
         genre = movie["genre"]
         count_genre[genre] = count_genre.get(genre,0) +1
+
     most_watched_genre = None
     highest_count = 0
     for genre in count_genre:
@@ -73,23 +74,23 @@ def get_most_watched_genre(user_data):
     return most_watched_genre
         
     
-
-
-
 # ------------- WAVE 3 --------------------
+
+def get_friend_watched_list(user_data):
+    # all the movies all the friends watched 
+    # each movie as a single string 
+    friends = user_data.get(FRIEND_DATA, [])
+    friends_watched = []
+    for friend in friends:
+        friends_watched.extend(friend.get(WATCHED, []))
+    return friends_watched
+
 # none of the friends watched these movies
 # only user wanted it 
 def get_unique_watched(user_data):
     # access data
-    watched = user_data.get(WATCHED, [])
-    friends = user_data.get(FRIEND_DATA, [])
-
-    # all the movies all the friends watched 
-    # each movie as a single string 
-    friends_watched = []
-    for friend in friends:
-        friends_watched.extend(friend.get(WATCHED, []))
-    
+    watched = user_data.get(WATCHED, [])   
+    friends_watched = get_friend_watched_list(user_data)
     # get user unique movies
     # add the movie to the list 
     # if its not in the friend's watched list
@@ -102,26 +103,23 @@ def get_unique_watched(user_data):
 
     
 # only friends watched the movies, not the user
-def get_friends_unique_watched(user_data):
-    # access data
-    watched = user_data.get(WATCHED, [])
-    friends = user_data.get(FRIEND_DATA, [])
-
-    # all the movies all the friends watched 
-    # each movie as a single string 
-    # duplicate codes with the previous function
-    # can create helper function
-    friends_watched = []
-    for friend in friends:
-        friends_watched.extend(friend.get(WATCHED, []))   
-
-    # eliminate the duplicated movies   
-    # from the list above with all the movies all the friends watched
-    # eliminates to duplicated ones
+def get_friends_uniq_watched(user_data):
+    friends_watched = get_friend_watched_list(user_data)
     friends_unique_watched = []
     for movie in friends_watched:
         if movie not in friends_unique_watched:
             friends_unique_watched.append(movie)
+    return friends_unique_watched
+    
+def get_friends_unique_watched(user_data):
+    # access data
+    watched = user_data.get(WATCHED, [])
+    friends_watched = get_friend_watched_list(user_data)
+    
+    # eliminate the duplicated movies   
+    # from the list above with all the movies all the friends watched
+    # eliminates to duplicated ones
+    friends_unique_watched = get_friends_uniq_watched(user_data)
 
     # for the movie that the friends watched
     # if the movie is not in the user's watched list
@@ -133,39 +131,19 @@ def get_friends_unique_watched(user_data):
     return only_friends_watched_not_user
 
 
-
-
-    
-
-
-
-        
-
 # ------------- WAVE 4 --------------------
 def get_available_recs(user_data):
     # access data
     watched = user_data.get(WATCHED, [])
     friends = user_data.get(FRIEND_DATA, [])
     subscriptions = user_data.get(SUBSCRIPTIONS, [])
-    
-    # this is duplicated code from WAVE 3
-    # all the movies all the friends watched 
-    # each movie as a single string 
-    # duplicate codes with the previous function
-    # can create helper function
-    friends_watched = []
-    for friend in friends:
-        friends_watched.extend(friend.get(WATCHED, []))   
+    friends_watched = get_friend_watched_list(user_data)
 
     # this is duplicated code from WAVE 3
     # eliminate the duplicated movies   
     # from the list above with all the movies all the friends watched
-    # eliminates to duplicated ones
-    friends_unique_watched = []
-    for movie in friends_watched:
-        if movie not in friends_unique_watched:
-            friends_unique_watched.append(movie)
-    
+    # eliminates to duplicated ones    
+    friends_unique_watched = get_friends_uniq_watched(user_data)
     # recommended is movies that friends watched but user have not
     # and in user's subscriptions
     recommended_movies = []
@@ -182,26 +160,14 @@ def get_available_recs(user_data):
 def get_new_rec_by_genre(user_data):
     # access data
     watched = user_data.get(WATCHED, [])
-    friends = user_data.get(FRIEND_DATA, [])
     most_watched_genre = get_most_watched_genre(user_data)
     
-    # this is duplicated code from WAVE 3
-    # all the movies all the friends watched 
-    # each movie as a single string 
-    # duplicate codes with the previous function
-    # can create helper function
-    friends_watched = []
-    for friend in friends:
-        friends_watched.extend(friend.get(WATCHED, []))   
 
     # this is duplicated code from WAVE 3
     # eliminate the duplicated movies   
     # from the list above with all the movies all the friends watched
     # eliminates to duplicated ones
-    friends_unique_watched = []
-    for movie in friends_watched:
-        if movie not in friends_unique_watched:
-            friends_unique_watched.append(movie)
+    friends_unique_watched = get_friends_uniq_watched(user_data)
     
     # recommended is movies that friends watched but user have not
     # and in user's subscriptions
@@ -214,35 +180,16 @@ def get_new_rec_by_genre(user_data):
     return recommended_movies_by_genre
 
 
-
-
-
-
-
 # user's favoraite, friend not watched
 def get_rec_from_favorites(user_data):
     # access data
-    watched = user_data.get(WATCHED, [])
-    friends = user_data.get(FRIEND_DATA, [])
     favorites = user_data.get(FAVORITES, [])
-    
-    # this is duplicated code from WAVE 3
-    # all the movies all the friends watched 
-    # each movie as a single string 
-    # duplicate codes with the previous function
-    # can create helper function
-    friends_watched = []
-    for friend in friends:
-        friends_watched.extend(friend.get(WATCHED, []))   
 
     # this is duplicated code from WAVE 3
     # eliminate the duplicated movies   
     # from the list above with all the movies all the friends watched
     # eliminates to duplicated ones
-    friends_unique_watched = []
-    for movie in friends_watched:
-        if movie not in friends_unique_watched:
-            friends_unique_watched.append(movie)
+    friends_unique_watched = get_friends_uniq_watched(user_data)
     
     # recommended is movies user favorite, but friend not watch
     recommended_favorite_movies_to_friends = []
