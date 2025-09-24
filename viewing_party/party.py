@@ -244,12 +244,12 @@ def get_rec_from_favorites(user_data):
         if movie not in friends_unique_watched:
             friends_unique_watched.append(movie)
     
-    # recommended is movies that friends watched but user have not
-    # and in user's subscriptions
-    # most watch genre is from wave_2
+    # recommended is movies user favorite, but friend not watch
     recommended_favorite_movies_to_friends = []
     for movie in favorites:
+        # if friends did watch the movie
         if movie not in friends_unique_watched:
+            # we will add it to our list to recommend to friend
             recommended_favorite_movies_to_friends.append(movie)
     return recommended_favorite_movies_to_friends
 
