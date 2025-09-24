@@ -248,17 +248,9 @@ def get_rec_from_favorites(user_data):
     # and in user's subscriptions
     # most watch genre is from wave_2
     recommended_favorite_movies_to_friends = []
-    for movie in friends_unique_watched:
-        if movie not in favorites:
+    for movie in favorites:
+        if movie not in friends_unique_watched:
             recommended_favorite_movies_to_friends.append(movie)
     return recommended_favorite_movies_to_friends
 
 
-
-
-    # the opposite way 
-    # recommended_favorite_movies_to_friends = []
-    # for movie in friends_unique_watched:
-    #     if movie in favorites:
-    #         recommended_favorite_movies_to_friends.append(movie)
-    # return recommended_favorite_movies_to_friends
